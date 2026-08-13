@@ -1,0 +1,31 @@
+<header class="navbar" role="banner">
+    <div class="navbar-left">
+        <button class="btn-icon mobile-toggle" aria-label="باز و بسته کردن منو" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <span class="page-title">{% block page_title %}خانه{% endblock %}</span>
+    </div>
+    
+    <div class="navbar-right">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="جستجو..." aria-label="جستجو">
+        </div>
+        <div class="user-tools">
+            {% if user.is_authenticated %}
+                <a href="{% url 'edit_profile' %}" class="btn-icon" aria-label="ویرایش پروفایل">
+                    <i class="fas fa-pen-to-square"></i>
+                </a>
+                <a href="{% url 'profile' user.username %}" class="avatar-link">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="آواتار" class="avatar-small">
+                    {% else %}
+                        <div class="avatar-placeholder avatar-small">{{ user.username|first|upper }}</div>
+                    {% endif %}
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-primary btn-sm">ورود</a>
+            {% endif %}
+        </div>
+    </div>
+</header>

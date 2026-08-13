@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}توییت {{ tweet.author.username }}{% endblock %}
+{% block page_title %}توییت{% endblock %}
+
+{% block content %}
+<div class="tweet-detail-container">
+    <!-- توییت اصلی (بدون المنت اضافی) -->
+    <div class="tweet-detail-main">
+        {% include 'includes/_tweet.html' with tweet=tweet %}
+    </div>
+    
+    <!-- فرم پاسخ -->
+    {% if user.is_authenticated %}
+    <div class="reply-compose" id="reply-compose">
+        <div class="reply-to">
+            <i class="fas fa-reply"></i>
+            <span>پاسخ به <a href="{% url 'profile' tweet.author.username %}">@{{ tweet.author.username }}</a></span>
+        </div>
+        <form method="post" action="{% url 'create_tweet' %}">
+            {% csrf_token %}
+            <input type="hidden" name="parent" value="{{ tweet.id }}">
+            
+            <div class="compose-avatar">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="آواتار" class="avatar-small">
+                {% else %}
+                    <div class="avatar-placeholder small">{{ user.username|first|upper }}</div>
+                {% endif %}
+            </div>
+            
+            <textarea name="content" placeholder="پاسخ خود را بنویسید..." rows="3" required aria-label="متن پاسخ"></textarea>
+            <div class="compose-footer">
+                <button type="submit" class="btn-primary">پاسخ</button>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="reply-compose">
+        <p>برای پاسخ دادن، لطفاً <a href="{% url 'login' %}?next={{ request.path }}">وارد</a> شوید.</p>
+    </div>
+    {% endif %}
+    
+    <!-- پاسخ‌ها -->
+    <div class="replies-section">
+        <h3 class="section-title">پاسخ‌ها</h3>
+        <div class="replies-feed">
+            {% if top_replies %}
+                {% include 'includes/_reply_tree.html' with replies=top_replies depth=0 %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>هنوز پاسخی ارسال نشده است.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

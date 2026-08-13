@@ -1,0 +1,52 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}خانه – djx{% endblock %}
+{% block page_title %}خانه{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <!-- فرم توییت جدید -->
+    {% if user.is_authenticated %}
+    <div class="tweet-compose">
+        <div class="compose-avatar">
+            {% if user.profile.avatar %}
+                <!-- تغییر کلاس به avatar-small -->
+                <img src="{{ user.profile.avatar.url }}" alt="آواتار شما" class="avatar-small">
+            {% else %}
+                <!-- تغییر کلاس به avatar-placeholder small -->
+                <div class="avatar-placeholder small">{{ user.username|first|upper }}</div>
+            {% endif %}
+        </div>
+        <form method="post" action="{% url 'create_tweet' %}" class="compose-form">
+            {% csrf_token %}
+            <textarea name="content" placeholder="چه خبر؟" rows="3" required aria-label="متن توییت"></textarea>
+            <div class="compose-footer">
+                <button type="submit" class="btn-primary">توییت</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    
+    <!-- لیست توییت‌ها -->
+    <div class="tweets-feed">
+        {% if user.is_authenticated %}
+            {% for tweet in tweets %}
+                {% include 'includes/_tweet.html' with tweet=tweet %}
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-feather-pointed"></i>
+                    <p>هیچ توییتی برای نمایش وجود ندارد.</p>
+                    <p class="empty-hint">افراد بیشتری را دنبال کنید تا توییت‌های آن‌ها را ببینید.</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-triangle-exclamation"></i>
+                <p>برای دیدن توییت‌ها، لطفاً <a href="{% url 'login' %}">وارد</a> شوید.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

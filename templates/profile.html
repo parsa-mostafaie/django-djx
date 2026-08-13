@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}پروفایل {{ profile_user.username }}{% endblock %}
+{% block page_title %}پروفایل{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- هدر پروفایل -->
+    <div class="profile-header">
+        <div class="profile-cover">
+            {% if profile_user.profile.cover_image %}
+                <img src="{{ profile_user.profile.cover_image.url }}" alt="تصویر کاور">
+            {% else %}
+                <div class="cover-placeholder"></div>
+            {% endif %}
+        </div>
+        
+        <div class="profile-info">
+            <div class="profile-avatar-wrapper">
+                {% if profile_user.profile.avatar %}
+                    <img src="{{ profile_user.profile.avatar.url }}" alt="آواتار" class="profile-avatar">
+                {% else %}
+                    <div class="avatar-placeholder large">{{ profile_user.username|first|upper }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="profile-details">
+                <div class="profile-name-area">
+                    <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+                    <span class="username">@{{ profile_user.username }}</span>
+                </div>
+                
+                <div class="profile-bio">
+                    {% if profile_user.profile.bio %}
+                        <p>{{ profile_user.profile.bio|linebreaksbr }}</p>
+                    {% else %}
+                        <p class="text-muted">هیچ بیوگرافی وارد نشده است.</p>
+                    {% endif %}
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-number">{{ tweets_count }}</span>
+                        <span class="stat-label">توییت</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">{{ following_count }}</span>
+                        <span class="stat-label">دنبال‌شونده</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">{{ followers_count }}</span>
+                        <span class="stat-label">دنبال‌کننده</span>
+                    </div>
+                </div>
+                
+                {% if request.user == profile_user %}
+                    <a href="{% url 'edit_profile' %}" class="btn-secondary edit-profile-btn">
+                        <i class="fas fa-pen"></i> ویرایش پروفایل
+                    </a>
+                {% else %}
+                    <form method="post" action="{% url 'follow' profile_user.username %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-primary follow-btn">
+                            {% if is_following %}دنبال نکن{% else %}دنبال کن{% endif %}
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- توییت‌های کاربر -->
+    <div class="profile-tweets">
+        <h2 class="section-title">توییت‌ها</h2>
+        <div class="tweets-feed">
+            {% for tweet in user_tweets %}
+                {% include 'includes/_tweet.html' with tweet=tweet %}
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-feather-pointed"></i>
+                    <p>این کاربر هنوز توییتی ارسال نکرده است.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

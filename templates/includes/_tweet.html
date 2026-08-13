@@ -1,0 +1,68 @@
+{% load humanize %}
+
+<div class="tweet" data-tweet-id="{{ tweet.id }}" data-detail-url="{% url 'tweet_detail' tweet.id %}">
+    <!-- پس‌زمینه کاور (اگر کاربر کاور داشته باشد) -->
+    {% if tweet.author.profile.cover_image %}
+        <div class="tweet-cover-bg" style="background-image: url('{{ tweet.author.profile.cover_image.url }}');"></div>
+    {% endif %}
+    
+    <div class="tweet-avatar">
+        <a href="{% url 'profile' tweet.author.username %}">
+            {% if tweet.author.profile.avatar %}
+                <img src="{{ tweet.author.profile.avatar.url }}" alt="آواتار {{ tweet.author.username }}" class="avatar">
+            {% else %}
+                <div class="avatar-placeholder">{{ tweet.author.username|first|upper }}</div>
+            {% endif %}
+        </a>
+    </div>
+    
+    <div class="tweet-body">
+        <div class="tweet-main-content">
+            <div class="tweet-header">
+                <span class="tweet-author">
+                    <span class="author-name">{{ tweet.author.get_full_name|default:tweet.author.username }}</span>
+                    <span class="author-username">@{{ tweet.author.username }}</span>
+                </span>
+                <span class="tweet-time font-fancy-fa" title="{{ tweet.created_at|date:'Y/m/d H:i' }}">
+                    {{ tweet.fa_time }}
+                </span>
+            </div>
+            
+            <div class="tweet-content">
+                {% if tweet.parent %}
+                    <div class="tweet-reply-context">
+                        <a href="{% url 'tweet_detail' tweet.parent.id %}" class="reply-context-link" onclick="event.stopPropagation();">
+                            <i class="fas fa-reply"></i>
+                            پاسخ به @{{ tweet.parent.author.username }}
+                        </a>
+                    </div>
+                {% endif %}
+                <p>{{ tweet.content|linebreaksbr }}</p>
+            </div>
+        </div>
+        
+        <div class="tweet-actions">
+            <a href="{% url 'tweet_detail' tweet.id %}" class="action-btn reply-btn" data-tweet-id="{{ tweet.id }}" aria-label="پاسخ">
+                <i class="fas fa-reply"></i>
+                <span class="count">{{ tweet.replies.count }}</span>
+            </a>
+            
+            <button class="action-btn like-btn {% if user in tweet.likes.all %}liked{% endif %}" 
+                    data-tweet-id="{{ tweet.id }}" 
+                    data-url="{% url 'like_tweet' tweet.id %}"
+                    aria-label="لایک">
+                <i class="fas fa-heart"></i>
+                <span class="count like-count">{{ tweet.likes.count }}</span>
+            </button>
+            
+            <button class="action-btn retweet-btn" aria-label="ریتوییت">
+                <i class="fas fa-retweet"></i>
+                <span class="count">{{ tweet.retweets.count }}</span>
+            </button>
+            
+            <button class="action-btn share-btn" aria-label="اشتراک‌گذاری">
+                <i class="fas fa-share"></i>
+            </button>
+        </div>
+    </div>
+</div>

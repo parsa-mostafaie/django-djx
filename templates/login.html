@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ورود – djx{% endblock %}
+{% block page_title %}ورود{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <i class="fa-brands fa-x-twitter"></i>
+            <h2>ورود به djx</h2>
+        </div>
+        
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_username">نام کاربری</label>
+                <input type="text" name="username" id="id_username" placeholder="نام کاربری خود را وارد کنید" required autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password">رمز عبور</label>
+                <input type="password" name="password" id="id_password" placeholder="رمز عبور" required>
+            </div>
+            
+            {% if form.errors %}
+                <div class="form-errors">
+                    <i class="fas fa-circle-exclamation"></i>
+                    <p>نام کاربری یا رمز عبور اشتباه است.</p>
+                </div>
+            {% endif %}
+            
+            <button type="submit" class="btn-primary btn-block">ورود</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>حساب کاربری ندارید؟ <a href="{% url 'register' %}">ثبت نام</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

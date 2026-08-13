@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}djx – شبیه‌ساز X{% endblock %}</title>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <!-- نوار کناری (سایدبار) -->
+      {% include 'includes/_sidebar.html' %}
+
+      <!-- بخش اصلی -->
+      <main class="main-content">
+        <!-- نوار بالایی (ناوبار) -->
+        {% include 'includes/_navbar.html' %}
+
+        <!-- محتوای صفحه -->
+        <div class="page-content">{% block content %} {% endblock %}</div>
+      </main>
+    </div>
+
+    <!-- اسکریپت‌های اختیاری -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>
